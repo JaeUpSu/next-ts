@@ -68,21 +68,32 @@ export default function Home() {
 }
 
 interface Props {
-  dehydratedState: DehydratedState;
-  data?: Movie[];
+  dehydratedState: DehydratedState | null;
+  data: Movie[] | null | undefined;
 }
 
 export async function getServerSideProps(): Promise<
   GetServerSidePropsResult<Props>
 > {
-  const queryClient = new QueryClient();
+  try {
+    const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(["movies"], getAllMovies);
+    await queryClient.prefetchQuery(["movies"], getAllMovies);
 
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-      data: queryClient.getQueryData(["movies"]),
-    },
-  };
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient),
+        data: queryClient.getQueryData(["movies"]),
+      },
+    };
+  } catch (e) {
+    console.log("Error in ssr fun", e);
+
+    return {
+      props: {
+        dehydratedState: null,
+        data: null,
+      },
+    };
+  }
 }
