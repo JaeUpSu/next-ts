@@ -20,21 +20,8 @@ export default function Home() {
   const { data, isLoading } = useQuery(["movies"], getAllMovies);
   const router = useRouter();
 
-  const onDetail = ({
-    id,
-    original_title: title,
-    poster_path: poster,
-  }: Movie) => {
-    router.push(
-      {
-        pathname: `/movies/${id}`,
-        query: {
-          title,
-          poster: `https://image.tmdb.org/t/p/w500/${poster}`,
-        },
-      },
-      `/movies/${id}`
-    );
+  const onDetail = (id: number, title: string) => {
+    router.push(`/movies/${title}/${id}`);
   };
 
   return (
@@ -47,13 +34,13 @@ export default function Home() {
               <div
                 key={movie.id}
                 className="movie"
-                onClick={() => onDetail(movie)}
+                onClick={() => onDetail(movie.id, movie.original_title)}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
                 />
                 <h4>
-                  <Link href={`/movies/${movie.id}`}>
+                  <Link href={`/movies/${movie.original_title}/${movie.id}`}>
                     {movie.original_title}
                   </Link>
                 </h4>
