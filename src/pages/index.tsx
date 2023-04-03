@@ -7,6 +7,8 @@ import {
 } from "@tanstack/react-query";
 import { getAllMovies } from "@/api";
 import Seo from "./seo";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface Movie {
   id: number;
@@ -16,6 +18,24 @@ interface Movie {
 
 export default function Home() {
   const { data, isLoading } = useQuery(["movies"], getAllMovies);
+  const router = useRouter();
+
+  const onDetail = ({
+    id,
+    original_title: title,
+    poster_path: poster,
+  }: Movie) => {
+    router.push(
+      {
+        pathname: `/movies/${id}`,
+        query: {
+          title,
+          poster: `https://image.tmdb.org/t/p/w500/${poster}`,
+        },
+      },
+      `/movies/${id}`
+    );
+  };
 
   return (
     <div className="container">
@@ -24,11 +44,19 @@ export default function Home() {
         <>
           {data?.results.map((movie: Movie) => {
             return (
-              <div className="movie" key={movie.id}>
+              <div
+                key={movie.id}
+                className="movie"
+                onClick={() => onDetail(movie)}
+              >
                 <img
                   src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
                 />
-                <h4>{movie.original_title}</h4>
+                <h4>
+                  <Link href={`/movies/${movie.id}`}>
+                    {movie.original_title}
+                  </Link>
+                </h4>
               </div>
             );
           })}
