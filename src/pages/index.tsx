@@ -1,5 +1,11 @@
+import { GetServerSidePropsResult } from "next";
+import {
+  useQuery,
+  QueryClient,
+  dehydrate,
+  DehydratedState,
+} from "@tanstack/react-query";
 import { getAllMovies } from "@/api";
-import { useQuery, QueryClient, dehydrate } from "@tanstack/react-query";
 import Seo from "./seo";
 
 interface Movie {
@@ -61,7 +67,14 @@ export default function Home() {
   );
 }
 
-export async function getServerSideProps() {
+interface Props {
+  dehydratedState: DehydratedState;
+  data?: Movie[];
+}
+
+export async function getServerSideProps(): Promise<
+  GetServerSidePropsResult<Props>
+> {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(["movies"], getAllMovies);
