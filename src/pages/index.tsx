@@ -47,6 +47,7 @@ export default function Home() {
           display: flex;
           flex-direction: column;
           align-items: center;
+          cursor: pointer;
         }
         .movie img {
           max-width: 100%;
